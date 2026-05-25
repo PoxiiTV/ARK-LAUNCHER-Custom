@@ -1,0 +1,24 @@
+{
+  "name": "ejecutable-ark",
+  "version": "1.0.0",
+  "description": "Auto-conectador premium de ARK Survival Evolved - 2026",
+  "main": "dev-server.js",
+  "scripts": {
+    "start": "tauri dev",
+    "dev": "tauri dev",
+    "build": "tauri build",
+    "make": "node launcher-maker.js"
+  },
+  "keywords": [
+    "ark",
+    "steam",
+    "launcher",
+    "auto-connect"
+  ],
+  "author": "Alexis & Antigravity AI",
+  "license": "MIT",
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.11.2"
+  }
+}
+

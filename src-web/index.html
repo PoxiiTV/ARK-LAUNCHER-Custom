@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARK Autoconnect 2026</title>
+    <!-- Fuente Outfit para una estética moderna y limpia de ciencia ficción -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container" id="appContainer">
+        <!-- Canvas para las partículas interactivas de fondo -->
+        <canvas id="particleCanvas"></canvas>
+        
+        <!-- Barra de título personalizada (arrastrable) con soporte nativo para Tauri -->
+        <header class="title-bar" id="titleBar" data-tauri-drag-region>
+            <div class="title-logo" data-tauri-drag-region>
+                <img src="icono.ico" class="logo-img" alt="Logo" data-tauri-drag-region>
+                <span class="logo-text" data-tauri-drag-region>POXI ARK LAUNCHER</span>
+            </div>
+            <div class="window-controls">
+                <button class="win-btn settings-btn" id="settingsBtn" title="Optimizaciones de Lanzamiento">⚙️</button>
+                <button class="win-btn minimize-btn" id="minimizeBtn" title="Minimizar">&#8211;</button>
+                <button class="win-btn close-btn" id="closeBtn" title="Cerrar">&times;</button>
+            </div>
+        </header>
+
+        <!-- Contenido principal -->
+        <main class="main-content">
+            
+            <!-- Contenedor Holográfico del Estado -->
+            <section class="status-panel">
+                <div class="hologram-ring" id="statusRing">
+                    <div class="ring-core"></div>
+                    <div class="ring-pulse"></div>
+                </div>
+                
+                <h1 class="status-title" id="statusTitle">VERIFICANDO RED</h1>
+                <p class="status-subtitle" id="statusSubtitle">Estableciendo conexión UDP segura...</p>
+            </section>
+
+            <!-- Tarjeta de Información de Servidor (Glassmorphism) -->
+            <section class="server-card card-hidden" id="serverCard">
+                <div class="card-glow"></div>
+                <div class="info-row">
+                    <span class="info-label">SERVIDOR</span>
+                    <span class="info-value text-glow" id="serverName">POXI PRIVATE SERVER</span>
+                </div>
+                <hr class="divider">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">MAPA</span>
+                        <span class="info-value" id="serverMap">TheIsland</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">JUGADORES</span>
+                        <span class="info-value" id="serverPlayers">0 / 10</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección de Acciones y Controles -->
+            <section class="action-panel">
+                <!-- Botón Principal Premium con gradiente -->
+                <button class="btn-action btn-disabled" id="mainActionBtn" disabled>
+                    <span class="btn-glow"></span>
+                    <span class="btn-content" id="btnContent">ESPERANDO RESPUESTA...</span>
+                </button>
+                
+                <!-- Enlace/Botón secundario para cancelar auto-conexión o reintentar -->
+                <button class="btn-secondary" id="secondaryActionBtn">
+                    Comprobar manualmente
+                </button>
+            </section>
+
+        </main>
+
+        <!-- Panel Desplegable de Optimización de Lanzamiento -->
+        <div class="optimization-panel panel-hidden" id="optimizationPanel">
+            <div class="panel-header">
+                <h3>⚙️ AJUSTES DE OPTIMIZACIÓN</h3>
+                <button class="panel-close-btn" id="closeSettingsBtn" title="Guardar y Cerrar">&times;</button>
+            </div>
+            <div class="panel-body">
+                <p class="panel-desc">Activa estos parámetros avanzados para aumentar los FPS y mejorar el rendimiento de tu ARK al iniciar:</p>
+                
+                <div class="toggle-option">
+                    <div class="toggle-info">
+                        <span class="toggle-title">🚀 CPU Turbo (All Cores)</span>
+                        <span class="toggle-desc">Fuerza a ARK a utilizar todos los núcleos del procesador.</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="optCores" value="-useallavailablecores">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="toggle-option">
+                    <div class="toggle-info">
+                        <span class="toggle-title">🛡️ Desactivar BattlEye</span>
+                        <span class="toggle-desc">Evita cargar el anti-cheat, mejorando la fluidez y FPS.</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="optNoBattlEye" value="-nobattleye">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="toggle-option">
+                    <div class="toggle-info">
+                        <span class="toggle-title">⚡ DirectX 10 (FPS Boost)</span>
+                        <span class="toggle-desc">Forzar Shader Model 4. Duplica los FPS en PCs normales.</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="optDirectX" value="-sm4">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="toggle-option">
+                    <div class="toggle-info">
+                        <span class="toggle-title">☁️ Cielo Optimizado (No Sky)</span>
+                        <span class="toggle-desc">Desactiva nubes volumétricas para estabilizar el rendimiento.</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="optSky" value="-nomansky">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="toggle-option">
+                    <div class="toggle-info">
+                        <span class="toggle-title">💾 Low Memory (Modo 4GB)</span>
+                        <span class="toggle-desc">Optimiza texturas. Crucial si tienes menos de 16GB de RAM.</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="optLowMem" value="-lowmemory">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer discreto -->
+        <footer class="app-footer">
+            <span class="latency-indicator" id="latencyIndicator">UDP PORT 25210 ACTIVE</span>
+            <span class="version-tag">V361.7 - TRAIDOR 2026</span>
+        </footer>
+
+        <!-- Modal de Optimización de Primera Ejecución (Welcome Setup) -->
+        <div class="first-run-modal modal-hidden" id="firstRunModal">
+            <div class="modal-glow"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>🦖 OPTIMIZACIÓN INICIAL</h2>
+                    <p class="modal-subtitle">¿Quieres activar alguno de estos parámetros para mejorar tu rendimiento en ARK al iniciar?</p>
+                </div>
+                <div class="modal-body">
+                    <div class="toggle-option">
+                        <div class="toggle-info">
+                            <span class="toggle-title">🚀 CPU Turbo (All Cores)</span>
+                            <span class="toggle-desc">Fuerza a ARK a utilizar todos los núcleos del procesador.</span>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="firstCores" value="-useallavailablecores">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="toggle-option">
+                        <div class="toggle-info">
+                            <span class="toggle-title">🛡️ Desactivar BattlEye</span>
+                            <span class="toggle-desc">Evita cargar el anti-cheat, mejorando FPS y fluidez general.</span>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="firstNoBattlEye" value="-nobattleye">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="toggle-option">
+                        <div class="toggle-info">
+                            <span class="toggle-title">⚡ DirectX 10 (FPS Boost)</span>
+                            <span class="toggle-desc">Shader Model 4. Duplica los FPS en computadoras promedio.</span>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="firstDirectX" value="-sm4">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="toggle-option">
+                        <div class="toggle-info">
+                            <span class="toggle-title">☁️ Cielo Optimizado (No Sky)</span>
+                            <span class="toggle-desc">Desactiva nubes volumétricas para estabilizar el rendimiento.</span>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="firstSky" value="-nomansky">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="toggle-option">
+                        <div class="toggle-info">
+                            <span class="toggle-title">💾 Low Memory (Modo 4GB)</span>
+                            <span class="toggle-desc">Optimiza texturas. Crucial si tienes menos de 16GB de RAM.</span>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="firstLowMem" value="-lowmemory">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <p class="poxi-dedication">✨ gracias a poxi, tu ark, sera mas estable jeje</p>
+                    <button class="btn-action" id="saveFirstRunBtn">
+                        <span class="btn-glow"></span>
+                        <span class="btn-content">💾 GUARDAR Y EMPEZAR</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script de lógica -->
+    <script src="renderer.js"></script>
+</body>
+</html>

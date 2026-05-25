@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poxi ARK Optimizer 🦖⚡</title>
+    <!-- Fuente Outfit moderna y futurista -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container" id="appContainer">
+        <!-- Canvas para las partículas estelares de fondo -->
+        <canvas id="particleCanvas"></canvas>
+        
+        <!-- Barra de título personalizada para Tauri (arrastrable) -->
+        <header class="title-bar" id="titleBar" data-tauri-drag-region>
+            <div class="title-logo" data-tauri-drag-region>
+                <span class="logo-icon" data-tauri-drag-region>🦖</span>
+                <span class="logo-text" data-tauri-drag-region>POXI ARK OPTIMIZER</span>
+            </div>
+            <div class="window-controls">
+                <button class="win-btn restore-all-btn" id="restoreAllBtn" title="Restaurar valores originales de fábrica">↩️ Restaurar</button>
+                <button class="win-btn minimize-btn" id="minimizeBtn" title="Minimizar">&#8211;</button>
+                <button class="win-btn close-btn" id="closeBtn" title="Cerrar">&times;</button>
+            </div>
+        </header>
+
+        <!-- Contenido principal en rejilla horizontal -->
+        <main class="main-content">
+            
+            <!-- PANEL IZQUIERDO: ESTADO DE DETECCION Y OPTIMIZACION DE ARCHIVOS .INI -->
+            <section class="left-panel">
+                <div class="panel-glow-bg"></div>
+                
+                <!-- Anillo Holográfico de Estado del Juego -->
+                <div class="hologram-container">
+                    <div class="hologram-ring" id="statusRing">
+                        <div class="ring-core">
+                            <span class="core-icon" id="coreIcon">🔍</span>
+                        </div>
+                        <div class="ring-pulse"></div>
+                    </div>
+                </div>
+
+                <div class="status-info">
+                    <h2 class="status-title" id="statusTitle">ESCANEANDO SISTEMA</h2>
+                    <p class="status-subtitle" id="statusSubtitle">Buscando instalación de ARK...</p>
+                </div>
+
+                <!-- Detalles de la ruta del juego -->
+                <div class="path-details">
+                    <span class="path-label">RUTA DE CONFIGURACIÓN (.INI):</span>
+                    <span class="path-value" id="pathValue">Buscando...</span>
+                    <button class="btn-secondary" id="btnManualPath" style="margin-top: 10px; display: none;">
+                        📂 SELECCIONAR CARPETA MANUAL
+                    </button>
+                </div>
+
+                <!-- Botón de Acción Principal de Optimización -->
+                <div class="action-container">
+                    <button class="btn-action btn-disabled" id="btnOptimize" disabled>
+                        <span class="btn-glow"></span>
+                        <span class="btn-content" id="btnOptimizeText">ESPERANDO RUTA</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- PANEL DERECHO: INTERRUPTORES DE STEAM LAUNCH OPTIONS Y GUIA -->
+            <section class="right-panel">
+                <div class="tabs-header">
+                    <button class="tab-btn active" id="tabLaunchOptions">⚙️ PARÁMETROS STEAM</button>
+                    <button class="tab-btn" id="tabGuide">📖 GUÍA DE INSTALACIÓN</button>
+                </div>
+
+                <div class="tab-content-container">
+                    
+                    <!-- TAB 1: PARÁMETROS DE LANZAMIENTO -->
+                    <div class="tab-content" id="contentLaunchOptions">
+                        <p class="section-desc">Selecciona las optimizaciones del procesador y RAM que inyectarás en Steam:</p>
+                        
+                        <div class="options-grid">
+                            
+                            <div class="toggle-option">
+                                <div class="toggle-info">
+                                    <span class="toggle-title">🚀 CPU Turbo (All Cores)</span>
+                                    <span class="toggle-desc">Fuerza el uso de todos los hilos del procesador.</span>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" class="launch-toggle" id="optCores" value="-USEALLAVAILABLECORES" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="toggle-option">
+                                <div class="toggle-info">
+                                    <span class="toggle-title">🎯 Prioridad Alta (High)</span>
+                                    <span class="toggle-desc">Windows prioriza los recursos para el juego.</span>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" class="launch-toggle" id="optHigh" value="-high" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="toggle-option">
+                                <div class="toggle-info">
+                                    <span class="toggle-title">🧠 Memoria Baja (Low Memory)</span>
+                                    <span class="toggle-desc">Optimiza texturas si tu PC tiene ≤16GB de RAM.</span>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" class="launch-toggle" id="optLowMem" value="-lowmemory">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="toggle-option">
+                                <div class="toggle-info">
+                                    <span class="toggle-title">🛡️ Omitir BattlEye (Singleplayer)</span>
+                                    <span class="toggle-desc">Evita el anti-cheat. Sube FPS en solitario u offline.</span>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" class="launch-toggle" id="optNoBattleye" value="-nobattleye">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="toggle-option">
+                                <div class="toggle-info">
+                                    <span class="toggle-title">📺 Pantalla Completa Exclusiva</span>
+                                    <span class="toggle-desc">Reduce el retraso de la ventana gráfica en Windows.</span>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" class="launch-toggle" id="optFullscreen" value="-fullscreen" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="toggle-option warning-option">
+                                <div class="toggle-info">
+                                    <span class="toggle-title">⚡ Forzar DX10 (Gama Muy Baja)</span>
+                                    <span class="toggle-desc">Ahorra memoria. Baja mucho los gráficos pero da +40 FPS.</span>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" class="launch-toggle" id="optDx10" value="-sm4 -d3d10">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Línea de parámetros resultante -->
+                        <div class="result-box">
+                            <span class="result-label">LÍNEA DE PARÁMETROS GENERADA:</span>
+                            <div class="result-input-group">
+                                <input type="text" id="resultCommand" readonly value="-USEALLAVAILABLECORES -high -fullscreen">
+                                <button class="btn-copy" id="btnCopy" title="Copiar al portapapeles">📋 COPIAR</button>
+                            </div>
+                            <span class="copy-success-msg" id="copySuccessMsg">¡Copiado con éxito!</span>
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: GUÍA DE INSTALACIÓN -->
+                    <div class="tab-content tab-hidden" id="contentGuide">
+                        <div class="guide-steps">
+                            <div class="step-card">
+                                <div class="step-num">01</div>
+                                <div class="step-text">
+                                    <h4>Abre tu Biblioteca de Steam</h4>
+                                    <p>Busca **ARK: Survival Evolved**, haz clic derecho sobre el juego y selecciona **Propiedades...**</p>
+                                </div>
+                            </div>
+                            
+                            <div class="step-card">
+                                <div class="step-num">02</div>
+                                <div class="step-text">
+                                    <h4>Pestaña General</h4>
+                                    <p>En la sección **General**, localiza la caja de texto al final llamada **Parámetros de lanzamiento**.</p>
+                                </div>
+                            </div>
+
+                            <div class="step-card highlight-step">
+                                <div class="step-num">03</div>
+                                <div class="step-text">
+                                    <h4>Pega y Guarda</h4>
+                                    <p>Pega la línea que copiaste de esta aplicación en esa caja de texto. ¡Cierra las propiedades e inicia el juego!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer estilizado de Poxi -->
+        <footer class="app-footer">
+            <span class="status-indicator-footer" id="footerIndicator">MODO ESCANEO ACTIVO</span>
+            <span class="version-tag">OPTIMIZADOR PREMIUM - BY POXI 2026</span>
+        </footer>
+    </div>
+
+    <!-- Scripts de interactividad y Tauri -->
+    <script src="main.js"></script>
+</body>
+</html>
