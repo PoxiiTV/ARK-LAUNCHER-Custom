@@ -126,6 +126,15 @@ El repositorio incluye la herramienta premium **Poxi ARK Launcher Maker** (`POXI
 
 ---
 
+## 📜 Licencia / License
+
+**Poxi ARK Launcher** se distribuye bajo la **PolyForm Noncommercial License 1.0.0** 🔒.
+
+Libre para **uso personal**: conectar tu servidor de ARK, aprender y experimentar. Prohibido el **uso comercial** — no se puede vender ni obtener beneficio económico con este proyecto.
+
+📄 Texto completo en [`LICENSE`](LICENSE).
+
+---
 
 🦖 *Desarrollado con pasión para la comunidad de ARK. ¡A disfrutar del juego de la forma más rápida y de la manera más optimizada posible!*
 
